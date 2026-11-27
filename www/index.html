@@ -180,7 +180,17 @@ STRICT RULES:
 7. Return ONLY raw HTML5 code starting with <!DOCTYPE html>. No markdown backticks, no explanations.`;
 
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
+        const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`);
+        const listData = await listRes.json();
+        const validModels = (listData.models || []).filter(m =>
+          (m.supportedGenerationMethods || []).includes('generateContent')
+        );
+        const picked = validModels.find(m => m.name.includes('flash') && !m.name.includes('2.5'))
+          || validModels.find(m => m.name.includes('flash'))
+          || validModels[0];
+        if (!picked) throw new Error('Koi active Gemini model nahi mila.');
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/${picked.name}:generateContent?key=${geminiKey}`;
         const aiRes = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
