@@ -37,7 +37,7 @@
       <div class="logo">⚡</div>
       <div>
         <div style="font-weight:700; font-size:15px;">AI App Studio Pro</div>
-        <div style="font-size:11px; color:#818cf8;">Gemini Engine + Auto Logo</div>
+        <div style="font-size:11px; color:#818cf8;">Gemini Auto-Fallback + Logo</div>
       </div>
     </div>
     <button onclick="openSettings()" class="btn-sm">⚙️ Settings</button>
@@ -167,7 +167,7 @@
       const packageId = 'com.myai.' + cleanSlug;
 
       document.getElementById('downloadLink').classList.add('hidden');
-      updateStatus('1/3: Gemini AI aapka real app code likh raha hai...', 25);
+      updateStatus('1/3: Best available Gemini model dhundha ja raha hai...', 20);
 
       const systemRules = `You are an elite Android Web-App developer.
 STRICT RULES:
@@ -183,30 +183,56 @@ STRICT RULES:
         const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`);
         const listData = await listRes.json();
         const validModels = (listData.models || []).filter(m =>
-          (m.supportedGenerationMethods || []).includes('generateContent')
+          (m.supportedGenerationMethods || []).includes('generateContent') &&
+          m.name.includes('gemini') &&
+          !m.name.includes('vision') &&
+          !m.name.includes('tts') &&
+          !m.name.includes('image')
         );
-        const picked = validModels.find(m => m.name.includes('flash') && !m.name.includes('2.5'))
-          || validModels.find(m => m.name.includes('flash'))
-          || validModels[0];
-        if (!picked) throw new Error('Koi active Gemini model nahi mila.');
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/${picked.name}:generateContent?key=${geminiKey}`;
-        const aiRes = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemRules }] },
-            contents: [{ parts: [{ text: `App Name: ${appName}\nUser Request: ${prompt}` }] }]
-          })
-        });
-        const aiData = await aiRes.json();
-        if (aiData.error) throw new Error(aiData.error.message);
+        const rankedModels = [
+          ...validModels.filter(m => m.name.includes('flash') && !m.name.includes('2.5')),
+          ...validModels.filter(m => m.name.includes('pro') && !m.name.includes('2.5')),
+          ...validModels.filter(m => m.name.includes('2.5'))
+        ];
+        const uniqueModels = [...new Map(rankedModels.map(m => [m.name, m])).values()].slice(0, 6);
+        if (!uniqueModels.length) throw new Error('Koi active Gemini model nahi mila.');
 
-        let code = aiData.candidates[0].content.parts[0].text.replace(/^```html\n?|```$/g, '').trim();
+        let code = '';
+        let lastError = 'Sabhi Gemini models abhi busy hain.';
+
+        for (let i = 0; i < uniqueModels.length; i++) {
+          const modelName = uniqueModels[i].name;
+          const shortName = modelName.replace('models/', '');
+          updateStatus(`1/3: ${shortName} se code banwaya ja raha hai (Try ${i + 1}/${uniqueModels.length})...`, 25 + i * 5);
+
+          try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${geminiKey}`;
+            const aiRes = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                systemInstruction: { parts: [{ text: systemRules }] },
+                contents: [{ parts: [{ text: `App Name: ${appName}\nUser Request: ${prompt}` }] }]
+              })
+            });
+            const aiData = await aiRes.json();
+            if (aiRes.ok && aiData.candidates && aiData.candidates[0]?.content?.parts?.[0]?.text) {
+              code = aiData.candidates[0].content.parts[0].text.replace(/^```html\n?|```$/g, '').trim();
+              break;
+            }
+            lastError = aiData.error?.message || lastError;
+          } catch (e) {
+            lastError = e.message;
+          }
+        }
+
+        if (!code) throw new Error(lastError);
+
         document.getElementById('codeCard').classList.remove('hidden');
         document.getElementById('codePreview').innerText = code.slice(0, 600) + '\n...';
 
-        updateStatus('2/3: App Name, Logo aur Code GitHub par upload ho raha hai...', 60);
+        updateStatus('2/3: App Name, Logo aur Code GitHub par upload ho raha hai...', 65);
         const configJson = JSON.stringify({ appName, packageId, iconColor }, null, 2);
         await uploadGitHubFile(ghUser, ghRepo, ghToken, 'app_config.json', configJson, 'Update App Config: ' + appName);
         await uploadGitHubFile(ghUser, ghRepo, ghToken, 'www/index.html', code, 'Build App: ' + appName);
