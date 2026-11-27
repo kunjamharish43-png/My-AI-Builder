@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AI App Studio Pro</title>
+  <title>AI App Studio Native</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: #090d16; color: #f8fafc; min-height: 100vh; padding-bottom: 40px; }
@@ -36,8 +36,8 @@
     <div class="brand">
       <div class="logo">⚡</div>
       <div>
-        <div style="font-weight:700; font-size:15px;">AI App Studio Pro</div>
-        <div style="font-size:11px; color:#818cf8;">Gemini Auto-Fallback + Logo</div>
+        <div style="font-weight:700; font-size:15px;">AI App Studio Native</div>
+        <div style="font-size:11px; color:#34d399;">Kotlin + Compose + ML Kit</div>
       </div>
     </div>
     <button onclick="openSettings()" class="btn-sm">⚙️ Settings</button>
@@ -48,27 +48,26 @@
       <div class="row">
         <div style="flex:1;">
           <label>App Name</label>
-          <input id="appNameInput" type="text" placeholder="e.g. Smart Scan Pro" style="margin-top:5px;" />
+          <input id="appNameInput" type="text" placeholder="e.g. Pro PDF Scanner" style="margin-top:5px;" />
         </div>
         <div>
           <label>Logo Color</label>
           <div class="color-box" style="margin-top:5px;">
-            <input id="iconColorInput" type="color" value="#6366f1" />
+            <input id="iconColorInput" type="color" value="#e11d48" />
           </div>
         </div>
       </div>
 
-      <label style="margin-top:4px;">Kaisa Real App Banana Hai?</label>
-      <textarea id="promptInput" rows="4" placeholder="Hindi ya English mein likhein... Jaise: Ek real Document Scanner banao jo camera se photo le, B&W filter lagaye aur save kare"></textarea>
+      <label style="margin-top:4px;">Kaisa Native Android App Banana Hai?</label>
+      <textarea id="promptInput" rows="4" placeholder="Hindi ya English mein likhein... Jaise: Adobe Scan jaisa fast auto-capture aur auto-crop PDF scanner banao"></textarea>
 
       <div class="chips">
-        <button onclick="fillSample('Smart Scanner', '#0ea5e9', 'Ek real Document Scanner app banao jisme camera/gallery se photo select ho, B&W aur Magic filter lage, aur image download/save ho sake')" class="chip">📄 Scanner</button>
-        <button onclick="fillSample('Weather Live', '#f59e0b', 'Ek online Live Weather app banao jo Open-Meteo free API use karke kisi bhi city ka live temperature, humidity aur forecast dikhaye')" class="chip">🌦️ Online Weather</button>
-        <button onclick="fillSample('Khata Tracker', '#10b981', 'Ek modern dark mode Expense Tracker app banao jisme daily kharcha add, delete aur total balance save rahe')" class="chip">💰 Expense</button>
-        <button onclick="fillSample('GK Quiz Pro', '#ec4899', 'Ek Hindi GK Quiz app banao jisme 10 sawal, timer aur final score dikhe')" class="chip">🧠 Quiz</button>
+        <button onclick="fillSample('Pro PDF Scan', '#e11d48', 'Adobe Scan jaisa fast Native Document Scanner app banao jo Google ML Kit Document Scanner use kare: auto-capture, auto-crop, filters, multi-page PDF creation, scanned pages preview list aur PDF share/open button ke saath.')" class="chip">📄 ML Kit Scanner</button>
+        <button onclick="fillSample('Smart Expense', '#10b981', 'Ek modern dark-mode Native Expense Tracker app banao jisme daily income/expense add, delete, category filter aur total balance SharedPreferences mein save rahe.')" class="chip">💰 Expense App</button>
+        <button onclick="fillSample('Quick Notes', '#6366f1', 'Ek clean dark-mode Native Notes aur To-Do app banao jisme notes add, search, pin aur delete kar sakein aur sab locally save rahe.')" class="chip">📝 Notes App</button>
       </div>
 
-      <button onclick="startBuild()" class="btn-primary">🚀 Generate & Build Real APK</button>
+      <button onclick="startBuild()" class="btn-primary">🚀 Generate & Build Native APK</button>
     </div>
 
     <div id="statusCard" class="card hidden">
@@ -76,13 +75,13 @@
         <label style="color:#818cf8;">Live Build Status</label>
         <span id="statusBadge" style="font-size:11px; background:#312e81; color:#c7d2fe; padding:3px 10px; border-radius:20px;">Working...</span>
       </div>
-      <p id="statusText" style="font-size:13px; color:#e2e8f0;">Gemini AI real app bana raha hai...</p>
+      <p id="statusText" style="font-size:13px; color:#e2e8f0;">Gemini AI Native Kotlin code likh raha hai...</p>
       <div class="progress-bg"><div id="progressBar" class="progress-fill"></div></div>
       <a id="downloadLink" href="#" target="_blank" class="btn-green hidden">📥 Open GitHub & Download APK</a>
     </div>
 
     <div id="codeCard" class="card hidden">
-      <label>Generated Code Preview</label>
+      <label>Generated Kotlin Code Preview</label>
       <pre id="codePreview"></pre>
     </div>
   </main>
@@ -152,7 +151,7 @@
     }
 
     async function startBuild() {
-      const appName = document.getElementById('appNameInput').value.trim() || 'My AI App';
+      const appName = document.getElementById('appNameInput').value.trim() || 'My Native App';
       const iconColor = document.getElementById('iconColorInput').value || '#6366f1';
       const prompt = document.getElementById('promptInput').value.trim();
       const geminiKey = localStorage.getItem('geminiKey');
@@ -167,17 +166,26 @@
       const packageId = 'com.myai.' + cleanSlug;
 
       document.getElementById('downloadLink').classList.add('hidden');
-      updateStatus('1/3: Best available Gemini model dhundha ja raha hai...', 20);
+      updateStatus('1/3: Best Gemini model dhundha ja raha hai...', 20);
 
-      const systemRules = `You are an elite Android Web-App developer.
-STRICT RULES:
-1. NEVER create a landing page, marketing page, promo website, or fake feature list.
-2. ALWAYS build a 100% REAL, WORKING, INTERACTIVE mobile app that opens directly into the main tool/screen.
-3. Put ALL CSS inside <style> tags (DO NOT use external CDNs like Tailwind CDN, so the app works 100% offline with zero broken styling).
-4. Make the UI look like a world-class modern dark-mode Android app with clean cards, large touch buttons, and smooth interactions.
-5. For online apps (weather, crypto, news, dictionary, etc.), use free no-key public APIs via fetch() with clean loading states and error handling.
-6. For offline/camera apps, use localStorage, HTML5 Canvas, and <input type="file" accept="image/*" capture="environment">.
-7. Return ONLY raw HTML5 code starting with <!DOCTYPE html>. No markdown backticks, no explanations.`;
+      const systemRules = `You are an expert Native Android Kotlin + Jetpack Compose developer.
+STRICT COMPILATION RULES:
+1. Return ONLY a single, complete, 100% compilable Kotlin file named MainActivity.kt. NO markdown backticks, NO explanations, NO extra text.
+2. Start with: package ${packageId}
+3. ONLY use these available dependencies (DO NOT import any other third-party library):
+   - Android SDK (compileSdk 34, minSdk 24), SharedPreferences, Intent, FileProvider
+   - androidx.activity.ComponentActivity, androidx.activity.compose.setContent, androidx.activity.compose.rememberLauncherForActivityResult, androidx.activity.result.IntentSenderRequest, androidx.activity.result.contract.ActivityResultContracts
+   - Jetpack Compose Material3 (androidx.compose.material3.*), Material Icons Extended (androidx.compose.material.icons.Icons, androidx.compose.material.icons.filled.*)
+   - Coil Compose (coil.compose.AsyncImage)
+   - Google ML Kit Document Scanner:
+     com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+     com.google.mlkit.vision.documentscanner.GmsDocumentScanning
+     com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
+4. For ANY document scanner / PDF scanner request:
+   - Use GmsDocumentScannerOptions.Builder() with SCANNER_MODE_FULL, RESULT_FORMAT_JPEG, RESULT_FORMAT_PDF, setGalleryImportAllowed(true), setPageLimit(20).
+   - Launch scanner with rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) and scanner.getStartScanIntent(activity).addOnSuccessListener { intentSender -> launcher.launch(IntentSenderRequest.Builder(intentSender).build()) }.
+   - Extract result via GmsDocumentScanningResult.fromActivityResultIntent(result.data), show scanned page thumbnails using AsyncImage, and provide working Open PDF & Share PDF buttons using Intent.ACTION_VIEW / Intent.ACTION_SEND with FLAG_GRANT_READ_URI_PERMISSION.
+5. Make the UI a sleek dark-mode Material3 app with @OptIn(ExperimentalMaterial3Api::class) where needed. Double-check all imports and syntax so gradle assembleDebug succeeds with zero errors.`;
 
       try {
         const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`);
@@ -204,7 +212,7 @@ STRICT RULES:
         for (let i = 0; i < uniqueModels.length; i++) {
           const modelName = uniqueModels[i].name;
           const shortName = modelName.replace('models/', '');
-          updateStatus(`1/3: ${shortName} se code banwaya ja raha hai (Try ${i + 1}/${uniqueModels.length})...`, 25 + i * 5);
+          updateStatus(`1/3: ${shortName} Native Kotlin code likh raha hai (Try ${i + 1}/${uniqueModels.length})...`, 25 + i * 5);
 
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${geminiKey}`;
@@ -218,7 +226,7 @@ STRICT RULES:
             });
             const aiData = await aiRes.json();
             if (aiRes.ok && aiData.candidates && aiData.candidates[0]?.content?.parts?.[0]?.text) {
-              code = aiData.candidates[0].content.parts[0].text.replace(/^```html\n?|```$/g, '').trim();
+              code = aiData.candidates[0].content.parts[0].text.replace(/^```kotlin\n?|^```kt\n?|^```\n?|```$/g, '').trim();
               break;
             }
             lastError = aiData.error?.message || lastError;
@@ -232,12 +240,12 @@ STRICT RULES:
         document.getElementById('codeCard').classList.remove('hidden');
         document.getElementById('codePreview').innerText = code.slice(0, 600) + '\n...';
 
-        updateStatus('2/3: App Name, Logo aur Code GitHub par upload ho raha hai...', 65);
+        updateStatus('2/3: App Config aur MainActivity.kt GitHub par upload ho raha hai...', 65);
         const configJson = JSON.stringify({ appName, packageId, iconColor }, null, 2);
-        await uploadGitHubFile(ghUser, ghRepo, ghToken, 'app_config.json', configJson, 'Update App Config: ' + appName);
-        await uploadGitHubFile(ghUser, ghRepo, ghToken, 'www/index.html', code, 'Build App: ' + appName);
+        await uploadGitHubFile(ghUser, ghRepo, ghToken, 'app_config.json', configJson, 'Update Native Config: ' + appName);
+        await uploadGitHubFile(ghUser, ghRepo, ghToken, 'MainActivity.kt', code, 'Build Native App: ' + appName);
 
-        updateStatus(`3/3: "${appName}" ka Real APK build shuru ho gaya hai! (2-3 min mein ready hoga)`, 100, 'Building APK');
+        updateStatus(`3/3: "${appName}" ka Native Kotlin APK build shuru ho gaya hai! (3-4 min mein ready hoga)`, 100, 'Building Native APK');
         const link = document.getElementById('downloadLink');
         link.href = `https://github.com/${ghUser}/${ghRepo}/actions`;
         link.classList.remove('hidden');
