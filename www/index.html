@@ -3,101 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AI App Studio</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>AI App Studio Pro</title>
   <style>
-    body { background: #090d16; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
-    .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-    .glow-btn { background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #090d16; color: #f8fafc; min-height: 100vh; padding-bottom: 40px; }
+    header { background: rgba(15, 23, 42, 0.92); border-bottom: 1px solid #1e293b; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 20; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 19px; }
+    .btn-sm { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+    main { max-width: 460px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .card { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 11px; }
+    label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+    textarea, input[type="text"], input[type="password"] { width: 100%; background: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 11px 12px; color: #fff; font-size: 14px; outline: none; }
+    textarea:focus, input:focus { border-color: #6366f1; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .color-box { display: flex; align-items: center; gap: 8px; background: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 6px 10px; }
+    input[type="color"] { width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; }
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .chip { flex-shrink: 0; background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
+    .btn-primary { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-weight: 700; font-size: 14px; }
+    .btn-green { display: block; text-align: center; text-decoration: none; width: 100%; padding: 13px; border-radius: 12px; background: #059669; color: #fff; font-weight: 700; font-size: 14px; }
+    .progress-bg { width: 100%; height: 8px; background: #1e293b; border-radius: 10px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #6366f1; width: 15%; transition: width 0.4s; }
+    .hidden { display: none !important; }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+    pre { background: #020617; padding: 12px; border-radius: 10px; font-size: 11px; color: #34d399; overflow-x: auto; max-height: 170px; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col pb-20">
+<body>
 
-  <!-- Header -->
-  <header class="glass sticky top-0 z-20 px-4 py-3.5 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-xl glow-btn flex items-center justify-center font-bold text-lg">⚡</div>
+  <header>
+    <div class="brand">
+      <div class="logo">⚡</div>
       <div>
-        <h1 class="font-bold text-base leading-tight">AI App Studio</h1>
-        <p class="text-[11px] text-indigo-400">Open-Source APK Builder</p>
+        <div style="font-weight:700; font-size:15px;">AI App Studio Pro</div>
+        <div style="font-size:11px; color:#818cf8;">Gemini Engine + Auto Logo</div>
       </div>
     </div>
-    <button onclick="openSettings()" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium active:scale-95">
-      ⚙️ Settings
-    </button>
+    <button onclick="openSettings()" class="btn-sm">⚙️ Settings</button>
   </header>
 
-  <!-- Main Content -->
-  <main class="p-4 max-w-md w-full mx-auto space-y-4">
-
-    <!-- Prompt Card -->
-    <div class="glass rounded-2xl p-4 space-y-3">
-      <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Kaisa App Banana Hai?</label>
-      <textarea id="promptInput" rows="4" placeholder="Example: Ek modern Expense Tracker app banao jisme daily kharcha add, delete aur total balance dikhe..."
-        class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"></textarea>
-
-      <!-- Quick Chips -->
-      <div class="flex gap-2 overflow-x-auto pb-1">
-        <button onclick="setPrompt('Ek modern dark mode Scientific Calculator app banao')" class="shrink-0 text-xs px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300">🧮 Calculator</button>
-        <button onclick="setPrompt('Ek clean To-Do List aur Task Manager app banao jisme tasks save rahein')" class="shrink-0 text-xs px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300">✅ To-Do App</button>
-        <button onclick="setPrompt('Ek Hindi GK Quiz app banao jisme score aur timer ho')" class="shrink-0 text-xs px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300">🧠 Quiz App</button>
+  <main>
+    <div class="card">
+      <div class="row">
+        <div style="flex:1;">
+          <label>App Name</label>
+          <input id="appNameInput" type="text" placeholder="e.g. Smart Scan Pro" style="margin-top:5px;" />
+        </div>
+        <div>
+          <label>Logo Color</label>
+          <div class="color-box" style="margin-top:5px;">
+            <input id="iconColorInput" type="color" value="#6366f1" />
+          </div>
+        </div>
       </div>
 
-      <button id="buildBtn" onclick="startBuild()" class="w-full py-3.5 rounded-xl glow-btn font-semibold text-sm active:scale-98 transition">
-        🚀 Generate & Build Real APK
-      </button>
-    </div>
+      <label style="margin-top:4px;">Kaisa Real App Banana Hai?</label>
+      <textarea id="promptInput" rows="4" placeholder="Hindi ya English mein likhein... Jaise: Ek real Document Scanner banao jo camera se photo le, B&W filter lagaye aur save kare"></textarea>
 
-    <!-- Build Tracker Card -->
-    <div id="statusCard" class="hidden glass rounded-2xl p-4 space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-indigo-400 uppercase">Live Build Status</span>
-        <span id="statusBadge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">Working...</span>
+      <div class="chips">
+        <button onclick="fillSample('Smart Scanner', '#0ea5e9', 'Ek real Document Scanner app banao jisme camera/gallery se photo select ho, B&W aur Magic filter lage, aur image download/save ho sake')" class="chip">📄 Scanner</button>
+        <button onclick="fillSample('Weather Live', '#f59e0b', 'Ek online Live Weather app banao jo Open-Meteo free API use karke kisi bhi city ka live temperature, humidity aur forecast dikhaye')" class="chip">🌦️ Online Weather</button>
+        <button onclick="fillSample('Khata Tracker', '#10b981', 'Ek modern dark mode Expense Tracker app banao jisme daily kharcha add, delete aur total balance save rahe')" class="chip">💰 Expense</button>
+        <button onclick="fillSample('GK Quiz Pro', '#ec4899', 'Ek Hindi GK Quiz app banao jisme 10 sawal, timer aur final score dikhe')" class="chip">🧠 Quiz</button>
       </div>
-      <p id="statusText" class="text-sm text-slate-200">AI code likh raha hai...</p>
-      <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-        <div id="progressBar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 15%"></div>
+
+      <button onclick="startBuild()" class="btn-primary">🚀 Generate & Build Real APK</button>
+    </div>
+
+    <div id="statusCard" class="card hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="color:#818cf8;">Live Build Status</label>
+        <span id="statusBadge" style="font-size:11px; background:#312e81; color:#c7d2fe; padding:3px 10px; border-radius:20px;">Working...</span>
       </div>
-      <a id="downloadLink" href="#" target="_blank" class="hidden block w-full text-center py-3 rounded-xl bg-emerald-600 font-semibold text-sm">
-        📥 Open GitHub & Download APK
-      </a>
+      <p id="statusText" style="font-size:13px; color:#e2e8f0;">Gemini AI real app bana raha hai...</p>
+      <div class="progress-bg"><div id="progressBar" class="progress-fill"></div></div>
+      <a id="downloadLink" href="#" target="_blank" class="btn-green hidden">📥 Open GitHub & Download APK</a>
     </div>
 
-    <!-- Code Preview -->
-    <div id="codeCard" class="hidden glass rounded-2xl p-4 space-y-2">
-      <span class="text-xs font-semibold text-slate-400">Generated Code Preview</span>
-      <pre id="codePreview" class="bg-slate-950 p-3 rounded-xl text-[11px] text-emerald-400 overflow-x-auto max-h-48"></pre>
+    <div id="codeCard" class="card hidden">
+      <label>Generated Code Preview</label>
+      <pre id="codePreview"></pre>
     </div>
-
   </main>
 
-  <!-- Settings Modal -->
-  <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-    <div class="glass w-full max-w-sm rounded-2xl p-5 space-y-3">
-      <h2 class="font-bold text-lg">API & GitHub Setup</h2>
-      <input id="groqKey" type="password" placeholder="Groq API Key (gsk_...)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm" />
-      <input id="ghUser" type="text" placeholder="GitHub Username" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm" />
-      <input id="ghRepo" type="text" placeholder="Factory Repo Name" value="App-Factory-Template" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm" />
-      <input id="ghToken" type="password" placeholder="GitHub Token (ghp_...)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm" />
-      <div class="flex gap-2 pt-2">
-        <button onclick="closeSettings()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-sm">Cancel</button>
-        <button onclick="saveSettings()" class="flex-1 py-2.5 rounded-xl glow-btn text-sm font-semibold">Save</button>
+  <div id="settingsModal" class="modal-bg hidden">
+    <div class="card" style="width:100%; max-width:360px;">
+      <div style="font-weight:700; font-size:17px;">Gemini & GitHub Setup</div>
+      <input id="geminiKey" type="password" placeholder="Gemini API Key (AIza...)" />
+      <input id="ghUser" type="text" placeholder="GitHub Username (kunjamharish43-png)" />
+      <input id="ghRepo" type="text" placeholder="Factory Repo Name" value="App-Factory-Template" />
+      <input id="ghToken" type="password" placeholder="GitHub Token (ghp_...)" />
+      <div class="row" style="margin-top:6px;">
+        <button onclick="closeSettings()" class="btn-sm" style="flex:1; padding:11px;">Cancel</button>
+        <button onclick="saveSettings()" class="btn-primary" style="flex:1; padding:11px;">Save</button>
       </div>
     </div>
   </div>
 
   <script>
-    function setPrompt(text) { document.getElementById('promptInput').value = text; }
+    function fillSample(name, color, prompt) {
+      document.getElementById('appNameInput').value = name;
+      document.getElementById('iconColorInput').value = color;
+      document.getElementById('promptInput').value = prompt;
+    }
+
     function openSettings() {
-      document.getElementById('groqKey').value = localStorage.getItem('groqKey') || '';
-      document.getElementById('ghUser').value = localStorage.getItem('ghUser') || '';
+      document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
+      document.getElementById('ghUser').value = localStorage.getItem('ghUser') || 'kunjamharish43-png';
       document.getElementById('ghRepo').value = localStorage.getItem('ghRepo') || 'App-Factory-Template';
       document.getElementById('ghToken').value = localStorage.getItem('ghToken') || '';
       document.getElementById('settingsModal').classList.remove('hidden');
     }
     function closeSettings() { document.getElementById('settingsModal').classList.add('hidden'); }
     function saveSettings() {
-      localStorage.setItem('groqKey', document.getElementById('groqKey').value.trim());
+      localStorage.setItem('geminiKey', document.getElementById('geminiKey').value.trim());
       localStorage.setItem('ghUser', document.getElementById('ghUser').value.trim());
       localStorage.setItem('ghRepo', document.getElementById('ghRepo').value.trim());
       localStorage.setItem('ghToken', document.getElementById('ghToken').value.trim());
@@ -112,62 +132,76 @@
       document.getElementById('statusBadge').innerText = badge;
     }
 
+    async function uploadGitHubFile(ghUser, ghRepo, ghToken, path, contentText, commitMsg) {
+      const url = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${path}`;
+      let sha = undefined;
+      const getRes = await fetch(url, { headers: { 'Authorization': `token ${ghToken}` } });
+      if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+      }
+      const encoded = btoa(unescape(encodeURIComponent(contentText)));
+      const body = { message: commitMsg, content: encoded };
+      if (sha) body.sha = sha;
+      const putRes = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!putRes.ok) throw new Error('GitHub Upload Failed (' + path + ')! Token/Repo check karein.');
+    }
+
     async function startBuild() {
+      const appName = document.getElementById('appNameInput').value.trim() || 'My AI App';
+      const iconColor = document.getElementById('iconColorInput').value || '#6366f1';
       const prompt = document.getElementById('promptInput').value.trim();
-      const groqKey = localStorage.getItem('groqKey');
+      const geminiKey = localStorage.getItem('geminiKey');
       const ghUser = localStorage.getItem('ghUser');
       const ghRepo = localStorage.getItem('ghRepo') || 'App-Factory-Template';
       const ghToken = localStorage.getItem('ghToken');
 
-      if (!groqKey || !ghUser || !ghToken) { openSettings(); return alert('Pehle Settings mein apni Keys dalein!'); }
+      if (!geminiKey || !ghUser || !ghToken) { openSettings(); return alert('Pehle Settings mein Gemini Key aur GitHub Token dalein!'); }
       if (!prompt) return alert('Pehle app ka prompt likhein!');
 
+      const cleanSlug = appName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 18) || 'app';
+      const packageId = 'com.myai.' + cleanSlug;
+
       document.getElementById('downloadLink').classList.add('hidden');
-      updateStatus('1/3: Open-Source AI aapke app ka code likh raha hai...', 25);
+      updateStatus('1/3: Gemini AI aapka real app code likh raha hai...', 25);
+
+      const systemRules = `You are an elite Android Web-App developer.
+STRICT RULES:
+1. NEVER create a landing page, marketing page, promo website, or fake feature list.
+2. ALWAYS build a 100% REAL, WORKING, INTERACTIVE mobile app that opens directly into the main tool/screen.
+3. Put ALL CSS inside <style> tags (DO NOT use external CDNs like Tailwind CDN, so the app works 100% offline with zero broken styling).
+4. Make the UI look like a world-class modern dark-mode Android app with clean cards, large touch buttons, and smooth interactions.
+5. For online apps (weather, crypto, news, dictionary, etc.), use free no-key public APIs via fetch() with clean loading states and error handling.
+6. For offline/camera apps, use localStorage, HTML5 Canvas, and <input type="file" accept="image/*" capture="environment">.
+7. Return ONLY raw HTML5 code starting with <!DOCTYPE html>. No markdown backticks, no explanations.`;
 
       try {
-        const modelsRes = await fetch('https://api.groq.com/openai/v1/models', {
-          headers: { 'Authorization': `Bearer ${groqKey}` }
-        });
-        const modelsData = await modelsRes.json();
-        const activeModels = (modelsData.data || []).filter(m =>
-          !m.id.includes('whisper') && !m.id.includes('guard') && !m.id.includes('tts') && !m.id.includes('playai')
-        );
-        const preferred = activeModels.find(m => m.id.includes('llama') || m.id.includes('qwen')) || activeModels[0];
-        if (!preferred) throw new Error('Groq par koi active text model nahi mila.');
-
-        const aiRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
+        const aiRes = await fetch(url, {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: preferred.id,
-            messages: [
-              { role: 'system', content: 'You are an expert mobile UI developer. Return ONLY raw, complete, single-file HTML5 code using Tailwind CSS CDN and working JavaScript. Make it look like a premium modern dark-mode mobile app. Do NOT wrap in markdown code fences or add explanations.' },
-              { role: 'user', content: prompt }
-            ]
+            systemInstruction: { parts: [{ text: systemRules }] },
+            contents: [{ parts: [{ text: `App Name: ${appName}\nUser Request: ${prompt}` }] }]
           })
         });
         const aiData = await aiRes.json();
-        if (!aiData.choices) throw new Error(aiData.error?.message || 'AI Error');
+        if (aiData.error) throw new Error(aiData.error.message);
 
-        let code = aiData.choices[0].message.content.replace(/^```html\n?|```$/g, '').trim();
+        let code = aiData.candidates[0].content.parts[0].text.replace(/^```html\n?|```$/g, '').trim();
         document.getElementById('codeCard').classList.remove('hidden');
         document.getElementById('codePreview').innerText = code.slice(0, 600) + '\n...';
 
-        updateStatus('2/3: Code GitHub Factory mein upload ho raha hai...', 55);
-        const fileUrl = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/www/index.html`;
-        const getFile = await fetch(fileUrl, { headers: { 'Authorization': `token ${ghToken}` } });
-        const fileData = await getFile.json();
+        updateStatus('2/3: App Name, Logo aur Code GitHub par upload ho raha hai...', 60);
+        const configJson = JSON.stringify({ appName, packageId, iconColor }, null, 2);
+        await uploadGitHubFile(ghUser, ghRepo, ghToken, 'app_config.json', configJson, 'Update App Config: ' + appName);
+        await uploadGitHubFile(ghUser, ghRepo, ghToken, 'www/index.html', code, 'Build App: ' + appName);
 
-        const encoded = btoa(unescape(encodeURIComponent(code)));
-        const putRes = await fetch(fileUrl, {
-          method: 'PUT',
-          headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: 'AI Generated App Update', content: encoded, sha: fileData.sha })
-        });
-        if (!putRes.ok) throw new Error('GitHub Upload Failed! Token/Repo check karein.');
-
-        updateStatus('3/3: GitHub cloud par Real APK build shuru ho gaya hai! (2-3 min mein ready hoga)', 100, 'Building APK');
+        updateStatus(`3/3: "${appName}" ka Real APK build shuru ho gaya hai! (2-3 min mein ready hoga)`, 100, 'Building APK');
         const link = document.getElementById('downloadLink');
         link.href = `https://github.com/${ghUser}/${ghRepo}/actions`;
         link.classList.remove('hidden');
